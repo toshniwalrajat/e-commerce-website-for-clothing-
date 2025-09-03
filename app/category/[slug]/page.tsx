@@ -8,13 +8,14 @@ const all = [
   { id: 4, title: 'Linen Blend Shirt', price: '₹1,799', image: '/window.svg', category: 'men' },
 ];
 
-export default async function CategoryPage({ params }: { params: { slug: string } }) {
-  const s = params.slug.toLowerCase();
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params; // Next 15: unwrap server params
+  const s = slug.toLowerCase();
   const list = s === 'women' || s === 'men' ? all.filter((p) => p.category === s) : all;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <h1 className="mb-4 font-medium capitalize">{params.slug}</h1>
+      <h1 className="mb-4 font-medium capitalize">{slug}</h1>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {list.map((p) => (
           <article key={p.id} className="rounded-xl border border-neutral-200 bg-white p-3">
