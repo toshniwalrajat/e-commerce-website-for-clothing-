@@ -1,14 +1,15 @@
-'use client';
-
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Collection | Mimosa',
   description: 'Curated collection',
 };
 
-export default function CollectionPage({ params }: { params: { slug: string } }) {
-  const title = params.slug
+export default async function CollectionPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
+
+  const title = slug
     .split('-')
     .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
     .join(' ');
@@ -21,7 +22,7 @@ export default function CollectionPage({ params }: { params: { slug: string } })
       </div>
 
       <p className="text-sm text-neutral-600">
-        Collection “{params.slug}” is coming soon. Replace this with real data or a fetch by slug.
+        Collection “{slug}” is coming soon. Replace this with real data or a fetch by slug.
       </p>
     </div>
   );
