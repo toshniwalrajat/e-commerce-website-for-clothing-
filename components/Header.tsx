@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { motion, AnimatePresence, PanInfo, type Transition } from 'framer-motion';
 
 // Client-only search to avoid hydration drift on inputs
 const SearchBox = dynamic(() => import('./SearchBox'), { ssr: false });
@@ -69,10 +69,10 @@ const nav: NavItem[] = [
 
 const defaultSuggestions = ['Trench coat', 'Wool overshirt', 'Pleated skirt', 'Linen shirt', 'Wide-leg trousers'];
 
-// Smooth spring configs
-const megaTransition = { type: 'spring', stiffness: 320, damping: 26 };
-const sheetSpring = { type: 'spring', stiffness: 380, damping: 32, mass: 0.7 }; // snappy but smooth
-const backdropEase = { duration: 0.18, ease: 'linear' };
+// ✅ Properly typed Framer Motion transitions
+const megaTransition: Transition = { type: 'spring', stiffness: 320, damping: 26 };
+const sheetSpring: Transition = { type: 'spring', stiffness: 380, damping: 32, mass: 0.7 };
+const backdropEase: Transition = { duration: 0.18, ease: 'linear' };
 
 export default function Header() {
   const [openMobile, setOpenMobile] = useState(false);
@@ -101,7 +101,7 @@ export default function Header() {
     }
   }, [openMobile]);
 
-  // ESC to close + focus trap for accessibility
+  // ESC to close + focus trap
   useEffect(() => {
     if (!openMobile) return;
 
@@ -125,15 +125,12 @@ export default function Header() {
     };
 
     document.addEventListener('keydown', onKey);
-    // focus the close button for quick repeat-close UX
     firstFocusableRef.current?.focus();
     return () => document.removeEventListener('keydown', onKey);
   }, [openMobile]);
 
-  // Close helpers
   const closeSheet = () => setOpenMobile(false);
 
-  // Drag-to-close (downward swipe)
   const onDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const dragY = info.offset.y;
     const velocityY = info.velocity.y;
@@ -173,7 +170,7 @@ export default function Header() {
                   <span className="absolute inset-x-0 -bottom-px h-[2px] origin-left scale-x-0 bg-black transition-transform duration-150 group-hover:scale-x-100" />
                 </Link>
 
-                {/* Mega menu (desktop) with pointer-events fix */}
+                {/* Mega menu (desktop) */}
                 <AnimatePresence>
                   {item.mega && activeMega === item.name && (
                     <motion.div
@@ -260,7 +257,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile drawer with smoother animation, drag-to-close, ESC, and focus trap */}
+      {/* Mobile drawer */}
       <AnimatePresence>
         {openMobile && (
           <>
@@ -286,10 +283,10 @@ export default function Header() {
               aria-label="Mobile menu"
               drag="y"
               dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={{ top: 0.02, bottom: 0.3 }} // slight overscroll feel
+              dragElastic={{ top: 0.02, bottom: 0.3 }}
               onDragEnd={onDragEnd}
             >
-              {/* Sheet header with grab-handle */}
+              {/* Sheet header */}
               <div className="sticky top-0 z-10 border-b border-neutral-200 bg-white/95 px-4 pb-3 pt-2 backdrop-blur">
                 <div className="mx-auto mt-1 mb-2 h-1.5 w-10 rounded-full bg-neutral-300" aria-hidden />
                 <div className="flex items-center justify-between">
